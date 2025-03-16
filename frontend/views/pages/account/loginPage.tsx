@@ -4,11 +4,26 @@ import Breadcrumb from "../../Containers/Breadcrumb";
 import { Row, Col, Input, Label } from "reactstrap";
 import { toast } from "react-toastify";
 
+// Define types for the form state
+interface LoginForm {
+  email: string;
+  password: string;
+}
+
 const Login: React.FC = () => {
   const router = useRouter();
-  const [userEmail, setUserEmail] = useState("");
-  const [userPassword, setUserPassword] = useState("");
+  const [form, setForm] = useState<LoginForm>({ email: "", password: "" });
 
+  // Handle form changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }));
+  };
+
+  // Handle form submission
   const loginAuth = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -18,14 +33,14 @@ const Login: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: userEmail, password: userPassword }),
+        body: JSON.stringify(form),
       });
 
       const data = await response.json();
 
       if (response.ok) {
         toast.success("Login successful!");
-        router.push("/");
+        router.push("/"); // Redirect to homepage
       } else {
         toast.error(data.message || "Login failed!");
       }
@@ -50,9 +65,9 @@ const Login: React.FC = () => {
                     <Input
                       type="email"
                       id="user-email"
-                      name="userEmail"
-                      value={userEmail}
-                      onChange={(e) => setUserEmail(e.target.value)}
+                      name="email"
+                      value={form.email}
+                      onChange={handleInputChange}
                       className="form-control"
                       placeholder="Enter your email address"
                       required
@@ -63,9 +78,9 @@ const Login: React.FC = () => {
                     <Input
                       type="password"
                       id="user-password"
-                      name="userPassword"
-                      value={userPassword}
-                      onChange={(e) => setUserPassword(e.target.value)}
+                      name="password"
+                      value={form.password}
+                      onChange={handleInputChange}
                       className="form-control"
                       placeholder="Enter your secure password"
                       required
