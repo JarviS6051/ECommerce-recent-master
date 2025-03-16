@@ -21,7 +21,7 @@ const productSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    collection: [{
+    productCollections: [{ // Renamed field to avoid conflict
         collectionName: {
             type: String,
             required: true
