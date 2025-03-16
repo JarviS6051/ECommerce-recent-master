@@ -14,7 +14,7 @@ dotenv.config();
 const app = express();
 
 // Set CORS origin conditionally based on the environment
-const allowedOrigins = ['https://e-commerce-recent-master-yash-baggas-projects.vercel.app', 'http://localhost:3000'];
+const allowedOrigins = ['https://e-commerce-recent-master.vercel.app', 'http://localhost:3000'];
 
 app.use(cors({
   origin: (origin, callback) => {
