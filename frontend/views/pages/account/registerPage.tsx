@@ -98,7 +98,7 @@ const RegisterPage: NextPage = () => {
   return (
     <>
       <Breadcrumb title="Register" parent="home" />
-      <section className="login-page section-big-py-space bg-light">
+        <section className="login-page section-big-py-space bg-light">
         <div className="custom-container">
           <Row className="row">
             <Col lg="4" className="offset-lg-4">
@@ -124,6 +124,18 @@ const RegisterPage: NextPage = () => {
                   <Button type="submit" className="btn btn-normal" disabled={isLoading}>
                     {isLoading ? "Creating Account..." : "Create Account"}
                   </Button>
+
+                  {/* Already have an account? Login */}
+                  <div className="form-row row mt-3">
+                    <Col md="12" className="text-center">
+                      <p>
+                        Already have an account?{" "}
+                        <a href="/pages/account/login" className="txt-default">
+                          Click here to Login
+                        </a>
+                      </p>
+                    </Col>
+                  </div>
                 </Form>
 
                 {/* OTP Modal */}
@@ -164,7 +176,7 @@ const RegisterPage: NextPage = () => {
             </Col>
           </Row>
         </div>
-      </section>
+        </section>
     </>
   );
 };
