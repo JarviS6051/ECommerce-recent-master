@@ -32,7 +32,7 @@ const productsData = (): Product[] => {
                 "sku": "sku1",
                 "size": "s",
                 "color": "yellow",
-                "image_id": 111
+                "image_id": "https://res.cloudinary.com/demo/image/upload/v1580807881/sample.jpg"
             },
             {
                 "variant_id": 102,

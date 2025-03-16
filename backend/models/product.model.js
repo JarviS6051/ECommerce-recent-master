@@ -1,7 +1,33 @@
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
-    name: {
+    title: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    description: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    type: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    brand: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    collection: [{
+        collectionName: {
+            type: String,
+            required: true
+        }
+    }],
+    category: {
         type: String,
         required: true,
         trim: true
@@ -11,32 +37,67 @@ const productSchema = new mongoose.Schema({
         required: true,
         min: 0
     },
-    description: {
-        type: String,
-        trim: true
+    sale: {
+        type: Boolean,
+        default: false
     },
-    image: {
+    discount: {
         type: String,
-        required: [true, 'Image is required ']
+        default: '0'
     },
-    category: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    size: {
-        type: String,
-        trim: true
-    },
-    color: {
-        type: String,
-        trim: true
-    },
-    rating: {
+    stock: {
         type: Number,
-        min: 0,
-        max: 5
-    }
+        required: true,
+        min: 0
+    },
+    new: {
+        type: Boolean,
+        default: false
+    },
+    tags: [{
+        type: String,
+        trim: true
+    }],
+    variants: [{
+        variant_id: {
+            type: Number,
+            required: true
+        },
+        sku: {
+            type: String,
+            required: true
+        },
+        size: {
+            type: String,
+            required: true
+        },
+        color: {
+            type: String,
+            required: true
+        },
+        image_id: {
+            type: Number,
+            required: true
+        }
+    }],
+    images: [{
+        image_id: {
+            type: Number,
+            required: true
+        },
+        alt: {
+            type: String,
+            required: true
+        },
+        src: {
+            type: String,
+            required: true
+        },
+        variant_id: [{
+            type: Number,
+            required: true
+        }]
+    }]
 });
 
 const Product = mongoose.model('Product', productSchema);
