@@ -58,13 +58,11 @@ const RegisterPage: NextPage = () => {
     try {
       const response = await API.post("/api/auth/register", formData);
       console.log("Response:", response.data);
-      setMessage("Account created successfully!");
+      setMessage("Account created successfully! An OTP has been sent to your email.");
 
-      // Send OTP to the email
-      const otpResponse = await API.post("/api/auth/send-otp", { email: formData.email });
-      if (otpResponse.data.success) {
-        setIsOtpSent(true);
-      }
+      // Now the OTP has been sent to the email automatically by the backend.
+      // Show OTP input
+      setIsOtpSent(true);
 
       // Clear the form
       setFormData({
@@ -92,6 +90,7 @@ const RegisterPage: NextPage = () => {
     setIsOtpValidating(true);
 
     try {
+      // Send OTP for verification to the backend
       const otpResponse = await API.post("/api/auth/verify-email", { email: formData.email, otp });
       if (otpResponse.data.success) {
         setMessage("OTP verified successfully! Redirecting to login...");
