@@ -85,7 +85,7 @@ const UserProfile: NextPage = () => {
                 <FormGroup>
                   <h5 className="forget-class">
                     <a href="/pages/account/forget-password" className="d-block">
-                      forget password?
+                      Forget password?
                     </a>
                   </h5>
                   <h6 className="forget-class">
