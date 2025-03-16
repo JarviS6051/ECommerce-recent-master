@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NextPage } from "next";
-import { Label, Input, Row, Col, Form, FormGroup, Button } from "reactstrap";
+import { Label, Input, Row, Col, Form, FormGroup, Button, Modal, ModalHeader, ModalBody } from "reactstrap";
 import Breadcrumb from "../../Containers/Breadcrumb";
 import API from "../../../utils/api"; // Adjust the import path as needed
 import { useRouter } from "next/router";
@@ -18,6 +18,7 @@ const RegisterPage: NextPage = () => {
   const [otp, setOtp] = useState(""); // State for OTP
   const [showOtpInput, setShowOtpInput] = useState(false); // Toggle for OTP input
   const [emailForOtp, setEmailForOtp] = useState(""); // Store email separately for OTP verification
+  const [modal, setModal] = useState(false); // Modal state to show OTP input
   const router = useRouter();
 
   // Handle input change
@@ -62,8 +63,8 @@ const RegisterPage: NextPage = () => {
       // Store email for OTP verification
       setEmailForOtp(formData.email);
 
-      // Show OTP input field
-      setShowOtpInput(true);
+      // Show OTP modal
+      setModal(true);
 
       // Set the message for OTP verification
       setMessage("OTP sent to your email. Please enter the OTP to verify your email.");
@@ -107,6 +108,9 @@ const RegisterPage: NextPage = () => {
       setIsLoading(false);
     }
   };
+
+  // Toggle modal visibility
+  const toggleModal = () => setModal(!modal);
 
   return (
     <>
@@ -191,30 +195,46 @@ const RegisterPage: NextPage = () => {
                   </div>
                 </Form>
 
-                {/* OTP Input */}
-                {showOtpInput && (
-                  <Form onSubmit={handleOtpSubmit}>
-                    <FormGroup>
-                      <Label htmlFor="otp">Enter OTP</Label>
-                      <Input
-                        type="text"
-                        id="otp"
-                        name="otp"
-                        placeholder="Enter 6 digit OTP"
-                        required
-                        value={otp}
-                        onChange={handleOtpChange}
-                      />
-                    </FormGroup>
-                    <Button
-                      type="submit"
-                      className="btn btn-normal"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "Verifying OTP..." : "Verify OTP"}
-                    </Button>
-                  </Form>
-                )}
+                {/* OTP Modal */}
+                <Modal isOpen={modal} toggle={toggleModal}>
+                  <ModalHeader toggle={toggleModal}>Verify Your Email</ModalHeader>
+                  <ModalBody>
+                    <Form onSubmit={handleOtpSubmit}>
+                      <FormGroup>
+                        <Label htmlFor="otp">Enter OTP</Label>
+                        <Input
+                          type="text"
+                          id="otp"
+                          name="otp"
+                          placeholder="Enter 6 digit OTP"
+                          required
+                          value={otp}
+                          onChange={handleOtpChange}
+                          maxLength={6}
+                          style={{
+                            fontSize: "18px",
+                            padding: "12px",
+                            textAlign: "center",
+                            letterSpacing: "5px",
+                            border: "2px solid #4CAF50",
+                            borderRadius: "8px",
+                            transition: "all 0.3s ease",
+                          }}
+                          onFocus={(e) => e.target.style.borderColor = "#45a049"} // Focus effect
+                          onBlur={(e) => e.target.style.borderColor = "#4CAF50"} // Blur effect
+                        />
+                      </FormGroup>
+                      <Button
+                        type="submit"
+                        className="btn btn-normal"
+                        disabled={isLoading}
+                        style={{ marginTop: "10px" }}
+                      >
+                        {isLoading ? "Verifying OTP..." : "Verify OTP"}
+                      </Button>
+                    </Form>
+                  </ModalBody>
+                </Modal>
 
                 {message && <p className="text-center">{message}</p>}
               </div>
