@@ -15,9 +15,9 @@ const RegisterPage: NextPage = () => {
 
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isOtpSent, setIsOtpSent] = useState(false);
-  const [otp, setOtp] = useState("");
-  const [isOtpValidating, setIsOtpValidating] = useState(false);
+  const [otp, setOtp] = useState(""); // State for OTP
+  const [showOtpInput, setShowOtpInput] = useState(false); // Toggle for OTP input
+  const [emailForOtp, setEmailForOtp] = useState(""); // Store email separately for OTP verification
   const router = useRouter();
 
   // Handle input change
@@ -47,7 +47,7 @@ const RegisterPage: NextPage = () => {
     return true;
   };
 
-  // Handle form submission (for sign up)
+  // Handle form submission for sign up
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -58,19 +58,16 @@ const RegisterPage: NextPage = () => {
     try {
       const response = await API.post("/api/auth/register", formData);
       console.log("Response:", response.data);
-      setMessage("Account created successfully! An OTP has been sent to your email.");
 
-      // Now the OTP has been sent to the email automatically by the backend.
-      // Show OTP input
-      setIsOtpSent(true);
+      // Store email for OTP verification
+      setEmailForOtp(formData.email);
 
-      // Clear the form
-      setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        password: "",
-      });
+      // Show OTP input field
+      setShowOtpInput(true);
+
+      // Set the message for OTP verification
+      setMessage("OTP sent to your email. Please enter the OTP to verify your email.");
+
     } catch (error: any) {
       console.error("Error response:", error.response);
       const errorMessage =
@@ -87,30 +84,27 @@ const RegisterPage: NextPage = () => {
   const handleOtpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    setIsOtpValidating(true);
+    setIsLoading(true);
 
     try {
-      // Send OTP for verification to the backend
-      const otpResponse = await API.post("/api/auth/verify-email", { email: formData.email, otp });
-      if (otpResponse.data.success) {
-        setMessage("OTP verified successfully! Redirecting to login...");
+      const response = await API.post("/api/auth/verify-email", {
+        email: emailForOtp,
+        code: otp,
+      });
 
-        // Redirect to login page after 2 seconds
-        setTimeout(() => {
-          router.push("/pages/account/login");
-        }, 2000);
-      } else {
-        setMessage("Invalid OTP. Please try again.");
-      }
+      console.log("OTP Verified:", response.data);
+      setMessage("Email verified successfully!");
+
+      // Redirect to login page after successful verification
+      setTimeout(() => {
+        router.push("/pages/account/login");
+      }, 2000);
+
     } catch (error: any) {
-      console.error("Error response:", error.response);
-      const errorMessage =
-        error.response?.data?.message ||
-        error.response?.data?.error ||
-        "OTP verification failed!";
-      setMessage(errorMessage);
+      console.error("Error verifying OTP:", error.response);
+      setMessage(error.response?.data?.message || "OTP verification failed!");
     } finally {
-      setIsOtpValidating(false);
+      setIsLoading(false);
     }
   };
 
@@ -196,36 +190,34 @@ const RegisterPage: NextPage = () => {
                     </Col>
                   </div>
                 </Form>
-                {message && <p className="text-center">{message}</p>}
-              </div>
 
-              {/* OTP Verification Section */}
-              {isOtpSent && !isOtpValidating && (
-                <div className="theme-card mt-4">
-                  <h4 className="text-center">Enter OTP</h4>
+                {/* OTP Input */}
+                {showOtpInput && (
                   <Form onSubmit={handleOtpSubmit}>
                     <FormGroup>
-                      <Label htmlFor="otp">OTP</Label>
+                      <Label htmlFor="otp">Enter OTP</Label>
                       <Input
                         type="text"
                         id="otp"
                         name="otp"
-                        placeholder="Enter the 6-digit OTP"
+                        placeholder="Enter 6 digit OTP"
+                        required
                         value={otp}
                         onChange={handleOtpChange}
-                        required
                       />
                     </FormGroup>
                     <Button
                       type="submit"
                       className="btn btn-normal"
-                      disabled={isOtpValidating}
+                      disabled={isLoading}
                     >
-                      {isOtpValidating ? "Validating OTP..." : "Verify OTP"}
+                      {isLoading ? "Verifying OTP..." : "Verify OTP"}
                     </Button>
                   </Form>
-                </div>
-              )}
+                )}
+
+                {message && <p className="text-center">{message}</p>}
+              </div>
             </Col>
           </Row>
         </div>
