@@ -61,11 +61,12 @@ export const register = async (req, res) => {
 };
 
 export const verifyEmail = async (req, res) => {
-    const { code } = req.body; // Getting the verification code from the request body
+    const { code, email } = req.body; // Getting the verification code and email from the request body
 
     try {
         // Find user by verification token and check if it has expired
         const user = await User.findOne({
+            email: email, // Check by email as well
             verificationToken: code,
             verificationTokenExpires: { $gt: Date.now() }, // Token must not be expired
         });
@@ -84,8 +85,15 @@ export const verifyEmail = async (req, res) => {
         // Send a welcome email after successful verification
         await sendWelcomeEmail(user.email, user.firstName);
 
-        // Send success response
-        return res.status(200).json({ message: 'Email verified successfully', user:{...user._doc, password: null} });
+        // Send success response including email and user details (excluding password)
+        return res.status(200).json({
+            message: 'Email verified successfully',
+            user: {
+                ...user._doc,
+                password: null,  // Do not return password
+                email: user.email // Include email in the response
+            }
+        });
 
     } catch (error) {
         // In case of any unexpected error, send a 500 response
