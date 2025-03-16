@@ -4,6 +4,7 @@ import { Label, Input, Row, Col, Form, FormGroup, Button } from "reactstrap";
 import Breadcrumb from "../../Containers/Breadcrumb";
 import API from "../../../utils/api"; // Adjust the import path as needed
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 const RegisterPage: NextPage = () => {
   const [formData, setFormData] = useState({
@@ -46,6 +47,7 @@ const RegisterPage: NextPage = () => {
     if (!validateForm()) return;
 
     setIsLoading(true);
+    setMessage("");
 
     try {
       const response = await API.post("/api/auth/register", formData);
@@ -61,15 +63,15 @@ const RegisterPage: NextPage = () => {
       });
 
       // Redirect to login page after 2 seconds
-      setTimeout(() => {
-        router.push("/pages/account/login");
-      }, 2000);
+      setTimeout(() => router.push("/pages/account/login"), 2000);
     } catch (error: any) {
-      console.error("Error response:", error.response);
+      console.error("Error response:", error);
+
       const errorMessage =
         error.response?.data?.message ||
         error.response?.data?.error ||
-        "Signup failed!";
+        "Signup failed! Please try again later.";
+
       setMessage(errorMessage);
     } finally {
       setIsLoading(false);
@@ -79,93 +81,83 @@ const RegisterPage: NextPage = () => {
   return (
     <>
       <Breadcrumb title="Register" parent="home" />
-      {/* <!--section start--> */}
       <section className="login-page section-big-py-space bg-light">
         <div className="custom-container">
-          <Row className="row">
+          <Row>
             <Col lg="4" className="offset-lg-4">
               <div className="theme-card">
                 <h3 className="text-center">Create Account</h3>
                 <Form className="theme-form" onSubmit={handleSubmit}>
-                  <div className="form-row row">
-                    <FormGroup className="col-md-12">
-                      <Label htmlFor="firstName">First Name</Label>
-                      <Input
-                        type="text"
-                        id="firstName"
-                        name="firstName"
-                        placeholder="First Name"
-                        required
-                        value={formData.firstName}
-                        onChange={handleChange}
-                      />
-                    </FormGroup>
-                    <FormGroup className="col-md-12">
-                      <Label htmlFor="lastName">Last Name</Label>
-                      <Input
-                        type="text"
-                        id="lastName"
-                        name="lastName"
-                        placeholder="Last Name"
-                        required
-                        value={formData.lastName}
-                        onChange={handleChange}
-                      />
-                    </FormGroup>
-                  </div>
-                  <div className="form-row row">
-                    <FormGroup className="col-md-12">
-                      <Label htmlFor="Email">Email</Label>
-                      <Input
-                        type="email"
-                        id="Email"
-                        name="email"
-                        placeholder="Email"
-                        required
-                        value={formData.email}
-                        onChange={handleChange}
-                      />
-                    </FormGroup>
-                    <FormGroup className="col-md-12">
-                      <Label htmlFor="password">Password</Label>
-                      <Input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="Enter your password"
-                        required
-                        value={formData.password}
-                        onChange={handleChange}
-                      />
-                    </FormGroup>
-                    <FormGroup className="col-md-12">
-                      <Button
-                        type="submit"
-                        className="btn btn-normal"
-                        disabled={isLoading}
-                      >
-                        {isLoading ? "Creating Account..." : "Create Account"}
-                      </Button>
-                    </FormGroup>
-                  </div>
-                  <div className="form-row row">
-                    <Col md="12">
-                      <p>
-                        Already have an account?{" "}
-                        <a href="/pages/account/login" className="txt-default">
-                          Click here to Login
-                        </a>
-                      </p>
-                    </Col>
-                  </div>
+                  <FormGroup>
+                    <Label htmlFor="firstName">First Name</Label>
+                    <Input
+                      type="text"
+                      id="firstName"
+                      name="firstName"
+                      placeholder="First Name"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                    />
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input
+                      type="text"
+                      id="lastName"
+                      name="lastName"
+                      placeholder="Last Name"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                    />
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      type="email"
+                      id="email"
+                      name="email"
+                      placeholder="Email"
+                      value={formData.email}
+                      onChange={handleChange}
+                    />
+                  </FormGroup>
+
+                  <FormGroup>
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                      type="password"
+                      id="password"
+                      name="password"
+                      placeholder="Enter your password"
+                      value={formData.password}
+                      onChange={handleChange}
+                    />
+                  </FormGroup>
+
+                  {message && (
+                    <p className={`text-center ${message.includes('successfully') ? 'text-success' : 'text-danger'}`}>
+                      {message}
+                    </p>
+                  )}
+
+                  <Button type="submit" disabled={isLoading} className="btn btn-normal w-100">
+                    {isLoading ? "Creating Account..." : "Create Account"}
+                  </Button>
+
+                  <p className="mt-3 text-center">
+                    Already have an account?{" "}
+                    <Link href="/pages/account/login" className="txt-default">
+                      Click here to Login
+                    </Link>
+                  </p>
                 </Form>
-                {message && <p className="text-center">{message}</p>}
               </div>
             </Col>
           </Row>
         </div>
       </section>
-      {/* <!--Section ends--> */}
     </>
   );
 };
