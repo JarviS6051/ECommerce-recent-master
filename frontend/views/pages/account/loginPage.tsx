@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import Breadcrumb from "../../Containers/Breadcrumb";
+import Breadcrumb from "../../Containers/Breadcrumb";  // Adjust path based on your project structure
 import { Row, Col, Input, Label } from "reactstrap";
 import { toast } from "react-toastify";
 
@@ -29,7 +29,7 @@ const Login: React.FC = () => {
 
     try {
       const response = await fetch("/api/auth/login", {
-        method: "POST",
+        method: "POST",  // Ensure POST method
         headers: {
           "Content-Type": "application/json",
         },
