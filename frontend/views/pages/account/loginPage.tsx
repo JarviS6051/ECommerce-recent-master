@@ -6,8 +6,8 @@ import { toast } from "react-toastify";
 
 const Login: React.FC = () => {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [userPassword, setUserPassword] = useState("");
 
   const loginAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,7 +18,7 @@ const Login: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: userEmail, password: userPassword }),
       });
 
       const data = await response.json();
@@ -46,26 +46,28 @@ const Login: React.FC = () => {
                 <h3 className="text-center">Login</h3>
                 <form className="theme-form" onSubmit={loginAuth}>
                   <div className="form-group">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="user-email">Email Address</Label>
                     <Input
                       type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      id="user-email"
+                      name="userEmail"
+                      value={userEmail}
+                      onChange={(e) => setUserEmail(e.target.value)}
                       className="form-control"
-                      id="email"
-                      placeholder="Enter your email"
+                      placeholder="Enter your email address"
                       required
                     />
                   </div>
                   <div className="form-group">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="user-password">Your Password</Label>
                     <Input
                       type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      id="user-password"
+                      name="userPassword"
+                      value={userPassword}
+                      onChange={(e) => setUserPassword(e.target.value)}
                       className="form-control"
-                      id="password"
-                      placeholder="Enter your password"
+                      placeholder="Enter your secure password"
                       required
                     />
                   </div>
